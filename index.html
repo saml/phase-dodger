@@ -98,10 +98,11 @@
 
       "testMovement": function(touch) {
         console.log(touch);
-        if (touch.position.x < player.x) {
+        var playerOffset = player.x + (player.width / 2);
+        if (touch.position.x < playerOffset) {
           this.moveLeft();
         }
-        else if (touch.position.x > player.x) {
+        else if (touch.position.x > playerOffset) {
           this.moveRight();
         }
         else {
