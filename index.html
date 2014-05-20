@@ -27,7 +27,9 @@
     }
   </style>
 
-  <article id="dodgeGame"></article>
+  <article id="dodgeGame">
+    <img id="loadingScreenImage" src="http://pixel.nymag.com/imgs/daily/other/2014/04/04/loading.o.png/a_417x0.png" width="417" height="600" alt="Loading" />
+  </article>
   
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script src="js/phaser.js"></script>
@@ -50,134 +52,221 @@
         "speed": 400
       },
       "collectible": {
+        "first": true,
         "speed": 200,
         "timer": 0,
         "offset": 1
       },
       "dodge": {
+        "first": true,
         "speed": 200,
         "timer": 0,
         "offset": 1
       }
     };
 
-    var addCollectible = function(player, collectible) {
-      collectible.kill();
-      settings.global.score += 100;
-      scoreboard.text = "SCORE: " + settings.global.score;
-    };
+    game = new Phaser.Game(417, 600, Phaser.AUTO, "dodgeGame");
 
-    var killPlayer = function(player, dodge) {
-      game.paused = true;
-    };
+    /**
+      * The main game state
+      */
+    var _MAIN = {
+      "addCollectible": function(player, collectible) {
+        collectible.kill();
+        settings.global.score += 100;
+        scoreboard.text = "SCORE: " + settings.global.score;
+      },
 
-    var preload = function() {
-      game.load.image("background", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaEAAAJYCAMAAAD8A6m8AAAAYFBMVEXSjjCQUSXGfCuaLxa6aCaXKxlhVlG0XSOSIhaOGhGrTh+PHBGcPjWjQBrLgy1XIAuLFg//7M/bw6LUkjGoeEnLjEuHgnxSGgZmIgmrlHCTj4nXkkqoo5y+tqsmEQ/kzKmPN/95AAAHF0lEQVR4Ae3d/07jRhSAUePY9Y+sXSC73TbdNO//lh2krUEpa5I4ODfx+f6yZAmQjuYOQZoh212k7be/p6dv293/IkRIhO4iQoQe5ozQ6ULb7zNGiND5EYo+5QhdS4cQIUKE7EGE7k2HECFChALsQYSsH0KECBG6wB5E6M/PbOAhRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiROjeI0Tor7c9PR0+DE/jL+cRIvSUen0YnsZfEiJEyJQjdNuZcl9vvrsX2t58saccoRmEHt+WvVavj6smNKvQZqh5PK5mstAfN931hNZHCq2nC1lDhAgRIkSI0EcR8rtceCFriBAhQnMKPQYXItR2ZWghQskonhChTXAhQn3fZ5GFCKVyQoQIEVqIUNF2NaHrC9WpA6Ghvry+EKGXfiWUnyxEiBChPozQbzfR/EJVUfRBhP65hWYVGpAGoTqkEKHiP6GsarvIQoRSVXAhQu1NCxEiRIjQ0MWECBEitOq6149EVVVHEyKU6javlQGFCLWvQBmhX0eIECFChAgRKqoushChVHV1IUKHSs16vYosRCi1GCFChAgRKroyshChVEuIECFC9yZU5nkeVIjQUBZbiFATR4jQ0IHQwXm8oEKEUn0ZW4hQfroQIUKENsGFCBV5H1iI0MF5vIBChA7O40UWIpSqCBEiNEmojSBE6KXFCBEiRIhQ17YDUl6162hChA7O49UBhQi1r0AZIUKECBEiRIhQ6n2hTdXWhEILbXpC8YTWZdkNQjmheEKpklBwoRUhQoQuJtQQCi2UFUVHKLJQqj1ViBAhQmXf94QCCI0qZYRiCzU3I0SoaEtCkYVS3dxChAgRIkSI0IZQcKGi6AlFFkpVb+6/aAgFFCo2Q/maUAChL6lfCTWEAgi9RIgQIULLFHokFFuor7qGUCihw/9guMnXhGIJHZ6YLBpCEYXauxEiRIgQoaH3hdaEYgv1VbUiFFko1RGKJ1R3XUYoslCKUHChhhAhQoSWIpR3hGILbVpChAgd2VuhLCMUWCgRNU1OKLJQ6laECBXtilBkoVRLiNDsESJEiFBPKLhQkfeEggnVqbdGHaFgQofrqB2EGkKxhZqaUGShVEboIEKECBEiRIjQqm0rQpGFUjWh4EIrQtGEyrIkFFooRYgQIULHRYgQIUJNWRCKLJQiRGjeCBEiROhLilBQoSFChAhdSmhdd4QiC6VWhAgRIkSIEKELRogQIUIpQoQIEVqKUJYRiio0RIjQxAgRIkSIECFChAgdRogQIULnRIgQIUKECBEiRIgQIUJ1TSi0UIoQoXMiRIgQIUKECBEiRIgQIUKEyrIkFFooRYhQzAgRIkSIECFC346IEKHpESJEiNA4xnQhQoQIfX2v+YQIjTBcWYjQxwtlrO8jPbxEKKbQEKGLCI13z0KEJk85QpOJfv9gCU0XIvT1zD5diBAhU+6B0GShcZ+pRgnoboUIESJE6OGB0GShp4s0YQURIkSIEKHAESJEiBAhQoT2oxEiRGhahAiFjxCh/ZTuXYgQIVOOECFChPbjESJEyJQjRIjQwoX2x0SIECFTjhAhQteKECFChAgRIrQ/I0KEPjdTjhAhQqYcIUKmHCFCphwhQqYcIULLPPtAiBAhU44QIVOOECFTjhAhQoQIESJEiBChhQl9v0iECEWIECFChAgRIkSIECFChAgRIkSIEKHtxSN0sstY4YUI7S4eoRPbjUaIECFChAgRGonQ9hMjNNL2yMILEdp9YoRG2h0ZIUKECBEiRGgkQttZIvSz7cmFFyK0myVCP9udHCFChAgRIkRoJELbeVuo0Pb8wgsR2s3ZgoV250bo2AgRIkSIECFChAgtNEIXi9CPZUaIECFCdxQhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESK00AhFz5Qz5QgRihshQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBChbewUXojQj9iJECERIiRCIkRIhAiJkAgREiERIiRChERIhAiJkAgREiFCIqQPhbaxU7aPnSIIiRAhESIkQiJESIREiJAIERKh57chOE3o+TBChOJFSBOENF/PoxEiFDVCsg8REiERIiRCIkRIhAiJkAgRev6gy33tCX3uNyFEKGgiREiECImQCBESIUIiJEKEREiECOn5nQgREiERIiRChERIhAiJkAgREiFCIiRChERIhAiJECER0sdCkS97eL5KwX748EKE9rETIUIiREiERIiQCBESIREiNKUr/OWVECFCsg8REiFCIiRChESIkAiJECEREiFCIkRIhESIkAiJECERcuPFTJcJxLhbYbZrE+5NiNA+TiJESIQIiZAIERIhESIkQoRESIQIiZD+BQ1iqU/VicHDAAAAAElFTkSuQmCC");
-      game.load.image("character", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAACBCAMAAAChKoe5AAAAM1BMVEX////Xq5oMAgKLFg8mEQ++tqvScm/Xkkr/6uJSGgbVp5b85NuZdmkDNxtRQS4/MBvouKa+RSB9AAAAAXRSTlMAQObYZgAAActJREFUeF7k0usKwyAMhuH+Sjz0sPu/2kkY/RxBF0PH3PZCWwvtQ0AXQ7G0+AIhef+8Uok+Jfb7OiUamklxEsxcLnk8+ozCEsRhhZFbgdDIrCjRrMAAYFRAaCU2sgzCWAwpALQCf0QRsRJyya7U8TQKBC6CU2GtGPdIH1O/omYaVZAahIhy5pdQvF5hVCvqKPcHyWe3khiUL1Ikk8LSW5Q6Zn6tBOk4U28+JaVakWzKfrSUY+8oUqXIx9u2hVJRzpfdrRCRT5G0cgaioyAoqKEgKCiVfkhJ67qGUG7pkwoRjSkglNIIRFchukgBYFcAPU+SHjn2SIw5FOTfo9bZr9cRTaugYGhBMysodwMws6JrE3+s3NutoxWGQSCIomlmBf//ixuQMCGr3cQxDaW5L4LCQVgEAbzqAbBtdWA9bSg4qZS8ESvG0Mz2OYKIprCIYM44pTAa4xXv2edo9CjsiGJfUsq7URQA00gF0JVSnwIMUOCUoFDpdqArRCQFB5WUEhdBWbv1LnFUSjcrJJaQc+5Q9v8zKsGkI2UpmLSgKHfx/YcyVatNiInKo5xNM9g1ivWlGWy0Yko0tC5XHsU3b/MbYboy12sf/ZDyKG9mwJhVhLjUAQAAAABJRU5ErkJggg==");
-      game.load.image("dodge", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAYFBMVEX///9pSBmMeEsnJSVXV1dUVFR4Uhy+vr6ZhFVBQUFNTU2wsLDLy8sFBQOUflFgQRViYmKHc0heXV2jjVtbWllJSUlQUE+9vb0hISEAAACSfFCRflNMTlSTfE2CcEf9/f0RIRXJAAAAAXRSTlMAQObYZgAAAb5JREFUeF7tl0mSwyAMRZsZz/OY6f63bGQcy51FQJWqXuWv/YyeJaD8Q00yH0nI8HIKGRbIzlT2IQofgKm+otJaN7y8FwATfQvmYNt1JcBkX1h5tR0HmOzLNGN8tU0Qxn56X6frwJUzplkQxn56X72VbFfwjoXF0xdWBlgDHBqSwkc80NeX7WDxbjxnV+a95A2rWCX2/gII3v6FkDdw2XV2e3jv715y5VUCMO+Oh5cKYQa+QbixR5no6zWSEHwA2uX5odA3AGNrsL9B3/NQ3Ky9ARzd3z/jeLlwxsC3RN/YjaBa1fPbyZeyBa/yqi5nXwo8qGEEbwKMZctatnwFbxzLqA82ykFmxmT9CN44IFGtkrWqTZ5Pcti8SxzNKN9ETXluaiXby74pHDxH+qo2m0wGK0PZ+8pzpO+UtaqWfmNojQdfpK+rfFhejtx4X1iZcNijrwFfOW7HEKsYXjPRvngAQoi+ePRConwN+i7nCyC+v+CL1w2E7Iuh+2Jo/X11pPtiPvL9+n59Ddl3dvDYpr2h+yJM9UW4V7Lv0Ze4slRpir4kWNatC/qS4FSOLuhLgB0NQV8KfER89JP1r793v1gaTgjXi0v+AAAAAElFTkSuQmCC");
-      game.load.image("collect", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAvBAMAAAAGOGeZAAAAIVBMVEX////xkcvyms/1r9nyk8vwiceFNmXn5+dWFDz////ylcxZMYoeAAAAAXRSTlMAQObYZgAAAI9JREFUeF6VzTEKwzAMhWGtvkrnXqSDc4RCTmByA3fzUtvvtpWFqSIiDPm3Dx48gu2+v/H1iM+47ej5I5bY2Rhd/ebUTONNWLMYleG5G/Ob7wD8DUxzTNdEqAwlydPSSjGw9LgUFpqFi0dqUi5MpxyXW24JZeGWzg4YBtSJO9TNOGAaOpd8QyhGMT58a1f/AGcODFKIwS3DAAAAAElFTkSuQmCC");
-      game.load.image("bonus", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAsCAMAAADGmMENAAAAElBMVEXs6+rwiceFNmX///9WFDz///9aRzkuAAAABnRSTlP//////wCzv6S/AAAAeklEQVR42u3VSwqAMAxF0dim+9+ypUWuUEkK/TjQO3FyXkaKkm7FxxKhG0UbNYPjKpSgE3TyNXEe+p4OpW9oVbU1tGoGczTU0FA0g00a2loGYxpqa7EOM0BX1qWjCMzW+aHkDH49rOtL0kOzXK5LNkVznuyvwWv9//IEEMAeC11xFQIAAAAASUVORK5CYII=");
-    };
+      "killPlayer": function(player, dodge) {
+        var blood = game.add.emitter(player.x + (player.width / 2), dodge.y, 200);
+        blood.makeParticles("blood");
+        blood.start(true, 1000, 20);
+        game.state.pauseUpdate();
 
-    var create = function() {
-      // physics engine
-      game.physics.startSystem(Phaser.Physics.ARCADE);
+      },
 
-      // main game background
-      game.add.sprite(0, 0, "background");
+      "preload": function() {
+        game.load.image("blood", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAHMIEHcKDXcIEXYKDXcJDXYJDXcKDgdccrgAAAAHdFJOUwAf3h7fvr1opIWIAAAAX0lEQVQI11XOMQqAQAwEwBU/cASxFwtbsbC/H9j5DznI9zWX3cKtliEkAb6cO5hxW1UPf4rQfRE6OZAcmJzY2bIF36x+YWJrBQNnKzTcYnFy7ddMmFz5mQmDhcBc8M8LmC8m0BaJpJMAAAAASUVORK5CYII=");
+        game.load.image("blooddrop", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUAQMAAAC3R49OAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURQAAAHcKDumOApcAAAABdFJOUwBA5thmAAAAIElEQVQI12NgAIEHCMz8A4HZ/yAw/z8ERhZn/ADBUAAAs1QQrUSCHVgAAAAASUVORK5CYII=");
+      },
 
-      // create the player
-      player = game.add.sprite(game.world.centerX - 34, game.world.height - 129, "character");
-      game.physics.arcade.enable(player);
-      player.body.collideWorldBounds = true;
-      player.body.setSize(player.width, player.height / 2, 0, 0);
+      "create": function() {
+        // physics engine
+        game.physics.startSystem(Phaser.Physics.ARCADE);
 
-      cursors = game.input.keyboard.createCursorKeys();
+        // main game background
+        game.add.sprite(0, 0, "background");
 
-      // generate collectibles
-      collectibles = game.add.group();
-      collectibles.enableBody = true;
+        // create the player
+        player = game.add.sprite(game.world.centerX - 34, game.world.height - 129, "character");
+        game.physics.arcade.enable(player);
+        player.body.collideWorldBounds = true;
+        player.body.setSize(player.width, player.height / 2, 0, 0);
 
-      // generate things to dodge
-      dodges = game.add.group();
-      dodges.enableBody = true;
+        cursors = game.input.keyboard.createCursorKeys();
 
-      // create the scoreboard
-      scoreboard = game.add.text(game.world.centerX + 20, 52,
-        "SCORE: " + settings.global.score, {
-          "font": "400 20px/1 Arial, sans-serif",
-          "fill": "#fff",
-          "align": "center"
+        // generate collectibles
+        collectibles = game.add.group();
+        collectibles.enableBody = true;
+
+        // generate things to dodge
+        dodges = game.add.group();
+        dodges.enableBody = true;
+
+        // create the scoreboard
+        scoreboard = game.add.text(game.world.centerX + 20, 52,
+          "SCORE: " + settings.global.score, {
+            "font": "400 20px/1 Arial, sans-serif",
+            "fill": "#fff",
+            "align": "center"
+          });
+
+        // create global timer
+        settings.global.timer = game.time.create(game);
+        settings.global.timer.start();
+
+        // increment collectible timer
+        settings.global.timer.loop(1000, function() {
+          ++settings.collectible.offset;
         });
 
-      // create global timer
-      settings.global.timer = game.time.create(game);
-      settings.global.timer.start();
+        // increment dodge timer
+        settings.global.timer.loop(750, function() {
+          ++settings.dodge.offset;
+        });
 
-      // increment collectible timer
-      settings.global.timer.loop(1000, function() {
-        ++settings.collectible.offset;
-      });
+        if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
+          game.scale.setShowAll();
+          game.scale.refresh();
+        }
+      },
 
-      // increment dodge timer
-      settings.global.timer.loop(750, function() {
-        ++settings.dodge.offset;
-      });
+      "update": function() {
+        // reset player velocity
+        player.body.velocity.x = 0;
 
-      if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
-        game.scale.setShowAll();
-        game.scale.refresh();
+        // move left
+        if (cursors.left.isDown) {
+          player.body.velocity.x = -settings.player.speed;
+        }
+        // move right
+        else if (cursors.right.isDown) {
+          player.body.velocity.x = settings.player.speed;
+        }
+        // else, stand still
+        else {
+          player.animations.stop();
+        }
+
+        // check if should add collectibles
+        if ((settings.collectible.timer >= 200 - (settings.collectible.offset / 2)) || settings.collectible.first) {
+          settings.collectible.first = false;
+          settings.collectible.timer = 0;
+          var collectible = collectibles.create(game.rnd.integerInRange(0, game.world.width - 30), -47, "collect");
+          collectible.outOfBoundsKill = true;
+          collectible.body.gravity.y = settings.collectible.speed + settings.collectible.offset;
+        }
+
+        // check if should add dodges
+        if ((settings.dodge.timer >= 150 - (settings.dodge.offset / 2)) || settings.dodge.first) {
+          settings.dodge.first = false;
+          settings.dodge.timer = 0;
+          var dodge = dodges.create(game.rnd.integerInRange(0, game.world.width - 60), -60, "dodge");
+          dodge.outOfBoundsKill = true;
+          dodge.body.gravity.y = settings.dodge.speed + settings.dodge.offset;
+          dodge.body.setSize(dodge.width, 10, 0, 0);
+          dodge.anchor.setTo(0.66, 0.3);
+          game.add.tween(dodge).to({"angle": 360}, 1000).loop().start();
+        }
+
+        // collision detections
+        game.physics.arcade.overlap(player, collectibles, this.addCollectible, null, this);
+        game.physics.arcade.overlap(player, dodges, this.killPlayer, null, this);
+
+        ++settings.collectible.timer;
+        ++settings.dodge.timer;
       }
     };
 
-    var update = function() {
-      // reset player velocity
-      player.body.velocity.x = 0;
+    /**
+      * The start screen
+      */
+    var _START = {
+      "gamePress": function() {
+        console.log("Button Pressed");
+        game.state.start("main");
+      },
 
-      // move left
-      if (cursors.left.isDown) {
-        player.body.velocity.x = -settings.player.speed;
-      }
-      // move right
-      else if (cursors.right.isDown) {
-        player.body.velocity.x = settings.player.speed;
-      }
-      // else, stand still
-      else {
-        player.animations.stop();
-      }
+      "preload": function() {
+        game.load.image("background", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaEAAAJYCAMAAAD8A6m8AAAAYFBMVEXSjjCQUSXGfCuaLxa6aCaXKxlhVlG0XSOSIhaOGhGrTh+PHBGcPjWjQBrLgy1XIAuLFg//7M/bw6LUkjGoeEnLjEuHgnxSGgZmIgmrlHCTj4nXkkqoo5y+tqsmEQ/kzKmPN/95AAAHF0lEQVR4Ae3d/07jRhSAUePY9Y+sXSC73TbdNO//lh2krUEpa5I4ODfx+f6yZAmQjuYOQZoh212k7be/p6dv293/IkRIhO4iQoQe5ozQ6ULb7zNGiND5EYo+5QhdS4cQIUKE7EGE7k2HECFChALsQYSsH0KECBG6wB5E6M/PbOAhRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiROjeI0Tor7c9PR0+DE/jL+cRIvSUen0YnsZfEiJEyJQjdNuZcl9vvrsX2t58saccoRmEHt+WvVavj6smNKvQZqh5PK5mstAfN931hNZHCq2nC1lDhAgRIkSI0EcR8rtceCFriBAhQnMKPQYXItR2ZWghQskonhChTXAhQn3fZ5GFCKVyQoQIEVqIUNF2NaHrC9WpA6Ghvry+EKGXfiWUnyxEiBChPozQbzfR/EJVUfRBhP65hWYVGpAGoTqkEKHiP6GsarvIQoRSVXAhQu1NCxEiRIjQ0MWECBEitOq6149EVVVHEyKU6javlQGFCLWvQBmhX0eIECFChAgRKqoushChVHV1IUKHSs16vYosRCi1GCFChAgRKroyshChVEuIECFC9yZU5nkeVIjQUBZbiFATR4jQ0IHQwXm8oEKEUn0ZW4hQfroQIUKENsGFCBV5H1iI0MF5vIBChA7O40UWIpSqCBEiNEmojSBE6KXFCBEiRIhQ17YDUl6162hChA7O49UBhQi1r0AZIUKECBEiRIhQ6n2hTdXWhEILbXpC8YTWZdkNQjmheEKpklBwoRUhQoQuJtQQCi2UFUVHKLJQqj1ViBAhQmXf94QCCI0qZYRiCzU3I0SoaEtCkYVS3dxChAgRIkSI0IZQcKGi6AlFFkpVb+6/aAgFFCo2Q/maUAChL6lfCTWEAgi9RIgQIULLFHokFFuor7qGUCihw/9guMnXhGIJHZ6YLBpCEYXauxEiRIgQoaH3hdaEYgv1VbUiFFko1RGKJ1R3XUYoslCKUHChhhAhQoSWIpR3hGILbVpChAgd2VuhLCMUWCgRNU1OKLJQ6laECBXtilBkoVRLiNDsESJEiFBPKLhQkfeEggnVqbdGHaFgQofrqB2EGkKxhZqaUGShVEboIEKECBEiRIjQqm0rQpGFUjWh4EIrQtGEyrIkFFooRYgQIULHRYgQIUJNWRCKLJQiRGjeCBEiROhLilBQoSFChAhdSmhdd4QiC6VWhAgRIkSIEKELRogQIUIpQoQIEVqKUJYRiio0RIjQxAgRIkSIECFChAgdRogQIULnRIgQIUKECBEiRIgQIUJ1TSi0UIoQoXMiRIgQIUKECBEiRIgQIUKEyrIkFFooRYhQzAgRIkSIECFC346IEKHpESJEiNA4xnQhQoQIfX2v+YQIjTBcWYjQxwtlrO8jPbxEKKbQEKGLCI13z0KEJk85QpOJfv9gCU0XIvT1zD5diBAhU+6B0GShcZ+pRgnoboUIESJE6OGB0GShp4s0YQURIkSIEKHAESJEiBAhQoT2oxEiRGhahAiFjxCh/ZTuXYgQIVOOECFChPbjESJEyJQjRIjQwoX2x0SIECFTjhAhQteKECFChAgRIrQ/I0KEPjdTjhAhQqYcIUKmHCFCphwhQqYcIULLPPtAiBAhU44QIVOOECFTjhAhQoQIESJEiBChhQl9v0iECEWIECFChAgRIkSIECFChAgRIkSIEKHtxSN0sstY4YUI7S4eoRPbjUaIECFChAgRGonQ9hMjNNL2yMILEdp9YoRG2h0ZIUKECBEiRGgkQttZIvSz7cmFFyK0myVCP9udHCFChAgRIkRoJELbeVuo0Pb8wgsR2s3ZgoV250bo2AgRIkSIECFChAgtNEIXi9CPZUaIECFCdxQhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESK00AhFz5Qz5QgRihshQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBChbewUXojQj9iJECERIiRCIkRIhAiJkAgREiERIiRChERIhAiJkAgREiFCIqQPhbaxU7aPnSIIiRAhESIkQiJESIREiJAIERKh57chOE3o+TBChOJFSBOENF/PoxEiFDVCsg8REiERIiRCIkRIhAiJkAgRev6gy33tCX3uNyFEKGgiREiECImQCBESIUIiJEKEREiECOn5nQgREiERIiRChERIhAiJkAgREiFCIiRChERIhAiJECER0sdCkS97eL5KwX748EKE9rETIUIiREiERIiQCBESIREiNKUr/OWVECFCsg8REiFCIiRChESIkAiJECEREiFCIkRIhESIkAiJECERcuPFTJcJxLhbYbZrE+5NiNA+TiJESIQIiZAIERIhESIkQoRESIQIiZD+BQ1iqU/VicHDAAAAAElFTkSuQmCC");
+        game.load.image("character", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAACBCAMAAAChKoe5AAAAM1BMVEX////Xq5oMAgKLFg8mEQ++tqvScm/Xkkr/6uJSGgbVp5b85NuZdmkDNxtRQS4/MBvouKa+RSB9AAAAAXRSTlMAQObYZgAAActJREFUeF7k0usKwyAMhuH+Sjz0sPu/2kkY/RxBF0PH3PZCWwvtQ0AXQ7G0+AIhef+8Uok+Jfb7OiUamklxEsxcLnk8+ozCEsRhhZFbgdDIrCjRrMAAYFRAaCU2sgzCWAwpALQCf0QRsRJyya7U8TQKBC6CU2GtGPdIH1O/omYaVZAahIhy5pdQvF5hVCvqKPcHyWe3khiUL1Ikk8LSW5Q6Zn6tBOk4U28+JaVakWzKfrSUY+8oUqXIx9u2hVJRzpfdrRCRT5G0cgaioyAoqKEgKCiVfkhJ67qGUG7pkwoRjSkglNIIRFchukgBYFcAPU+SHjn2SIw5FOTfo9bZr9cRTaugYGhBMysodwMws6JrE3+s3NutoxWGQSCIomlmBf//ixuQMCGr3cQxDaW5L4LCQVgEAbzqAbBtdWA9bSg4qZS8ESvG0Mz2OYKIprCIYM44pTAa4xXv2edo9CjsiGJfUsq7URQA00gF0JVSnwIMUOCUoFDpdqArRCQFB5WUEhdBWbv1LnFUSjcrJJaQc+5Q9v8zKsGkI2UpmLSgKHfx/YcyVatNiInKo5xNM9g1ivWlGWy0Yko0tC5XHsU3b/MbYboy12sf/ZDyKG9mwJhVhLjUAQAAAABJRU5ErkJggg==");
+        game.load.image("dodge", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAYFBMVEX///9pSBmMeEsnJSVXV1dUVFR4Uhy+vr6ZhFVBQUFNTU2wsLDLy8sFBQOUflFgQRViYmKHc0heXV2jjVtbWllJSUlQUE+9vb0hISEAAACSfFCRflNMTlSTfE2CcEf9/f0RIRXJAAAAAXRSTlMAQObYZgAAAb5JREFUeF7tl0mSwyAMRZsZz/OY6f63bGQcy51FQJWqXuWv/YyeJaD8Q00yH0nI8HIKGRbIzlT2IQofgKm+otJaN7y8FwATfQvmYNt1JcBkX1h5tR0HmOzLNGN8tU0Qxn56X6frwJUzplkQxn56X72VbFfwjoXF0xdWBlgDHBqSwkc80NeX7WDxbjxnV+a95A2rWCX2/gII3v6FkDdw2XV2e3jv715y5VUCMO+Oh5cKYQa+QbixR5no6zWSEHwA2uX5odA3AGNrsL9B3/NQ3Ky9ARzd3z/jeLlwxsC3RN/YjaBa1fPbyZeyBa/yqi5nXwo8qGEEbwKMZctatnwFbxzLqA82ykFmxmT9CN44IFGtkrWqTZ5Pcti8SxzNKN9ETXluaiXby74pHDxH+qo2m0wGK0PZ+8pzpO+UtaqWfmNojQdfpK+rfFhejtx4X1iZcNijrwFfOW7HEKsYXjPRvngAQoi+ePRConwN+i7nCyC+v+CL1w2E7Iuh+2Jo/X11pPtiPvL9+n59Ddl3dvDYpr2h+yJM9UW4V7Lv0Ze4slRpir4kWNatC/qS4FSOLuhLgB0NQV8KfER89JP1r793v1gaTgjXi0v+AAAAAElFTkSuQmCC");
+        game.load.image("collect", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAvBAMAAAAGOGeZAAAAIVBMVEX////xkcvyms/1r9nyk8vwiceFNmXn5+dWFDz////ylcxZMYoeAAAAAXRSTlMAQObYZgAAAI9JREFUeF6VzTEKwzAMhWGtvkrnXqSDc4RCTmByA3fzUtvvtpWFqSIiDPm3Dx48gu2+v/H1iM+47ej5I5bY2Rhd/ebUTONNWLMYleG5G/Ob7wD8DUxzTNdEqAwlydPSSjGw9LgUFpqFi0dqUi5MpxyXW24JZeGWzg4YBtSJO9TNOGAaOpd8QyhGMT58a1f/AGcODFKIwS3DAAAAAElFTkSuQmCC");
+        game.load.image("bonus", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAABLBAMAAADqjDgkAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAnUExURQAAAP/YAP///1YUPIU2ZYVOLvCJx7JzRfq7Vve9Uf39/fi9UfPBSwQeRdIAAAABdFJOUwBA5thmAAAA3ElEQVQ4y8XSUQrCMAwA0OgJlo/hr+wKxRNY8FtGbiD+Dx29gezDA/jpNbydTbvRZpvQVcGwn76maVgD4GNd8ScijQCqLeTQ8httiVDFb6TRqKrbTqL8G7NjhSKK76jrXo/7ozOIRD3dzi4MlvVOUoOkIjpprRusI2IxkrRLagNdtaeLknTgcyOyLQQyxpNSfauAuBnoiIJaEsTV9vbcQHyBXauQxFSrD0QxEckk/q/lDJE45/rwfcaPadNoTD6mTw4pVEyHZYYglzCDonlbRGJS00mM+e/pH/GMF29NBFXWRM0ozwAAAABJRU5ErkJggg==");
 
-      // check if should add collectibles
-      if (settings.collectible.timer >= 200 - (settings.collectible.offset / 2)) {
-        settings.collectible.timer = 0;
-        var collectible = collectibles.create(game.rnd.integerInRange(0, game.world.width - 30), -47, "collect");
-        collectible.outOfBoundsKill = true;
-        collectible.body.gravity.y = settings.collectible.speed + settings.collectible.offset;
+        // remove the loading screen
+        document.getElementById("loadingScreenImage").remove();
+      },
+
+      "create": function() {
+        game.add.button(game.world.centerX - 100, 400, "START GAME", this.gamePress, this, 2, 1, 0);
+      },
+
+      "update": function() {
+
       }
-
-      // check if should add dodges
-      if (settings.dodge.timer >= 150 - (settings.dodge.offset / 2)) {
-        settings.dodge.timer = 0;
-        var dodge = dodges.create(game.rnd.integerInRange(0, game.world.width - 60), -60, "dodge");
-        dodge.outOfBoundsKill = true;
-        dodge.body.gravity.y = settings.dodge.speed + settings.dodge.offset;
-        dodge.body.setSize(dodge.width, 10, 0, 0);
-      }
-
-      // collision detections
-      game.physics.arcade.overlap(player, collectibles, addCollectible, null, this);
-      game.physics.arcade.overlap(player, dodges, killPlayer, null, this);
-
-      ++settings.collectible.timer;
-      ++settings.dodge.timer;
     };
 
-    game = new Phaser.Game(417, 600, Phaser.AUTO, "dodgeGame", {
-      "preload": preload,
-      "create": create,
-      "update": update
-    });
+    /**
+      * The game over screen
+      */
+    var _GAMEOVER = {
+      "shareToFacebook": function() {
+        FB.ui({
+          "method": "feed",
+          "link": window.location.href,
+          "picture": "http://placekitten.com/190",
+          "name": "'Game of Thrones' The Video Game",
+          "caption": "All the intrigue, minus the violence. Oh, who are we kidding.",
+          "description": "I drank " + global.settings.score + " glasses of wine in Vulture's 'Game of Thrones' Video Game"
+        }, function(response){});
 
+        // Omniture custom tracking
+        //G.readOmnitureOnPageView(this, "38", link + " Facebook Customized Share");
+        // Google Analytics Event tracking
+        //_gaq.push(["_trackEvent", "Vulture, Quiz", quizName, "Facebook Share"]);
+      },
+
+      "shareToTwitter": function() {
+        window.open("http://twitter.com/intent/tweet" +
+          "?source=tweetbutton&text=" + encodeURIComponent("I drank " + global.settings.score +
+          " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat") + "+" + encodeURIComponent(link), "Tweet Your Score",
+          "width=600,height=300,left=" + Math.ceil(($(window).width() / 2) - 300) + ",top=" + Math.ceil(($(window).height() / 2) - 127));
+
+        // Omniture custom tracking
+        //G.readOmnitureOnPageView(this, "39", link + " Twitter Customized Share");
+        // Google Analytics Event tracking
+        //_gaq.push(["_trackEvent", "Vulture, Quiz", quizName, "Twitter Share"]);
+      },
+
+      "preload": function() {
+
+      },
+
+      "create": function() {
+        game.add.button(50, 200, "SHARE TO FACEBOOK", this.shareToFacebook, this, 2, 1, 0);
+        game.add.button(450, 200, "SHARE TO TWITTER", this.shareToTwitter, this, 2, 1, 0);
+      },
+
+      "update": function() {
+
+      }
+    };
+
+    game.state.add("start", _START);
+    game.state.add("main", _MAIN);
+    game.state.add("gameover", _GAMEOVER);
+    game.state.start("start");
   // })();
   </script>
 </body>
