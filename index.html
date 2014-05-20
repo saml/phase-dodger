@@ -223,7 +223,7 @@
             settings.dodge.first = false;
             this.createDodge();
           }
-          if (settings.dodge.second && (settings.dodge.timer2 > 20)) {
+          if (settings.dodge.second && (settings.dodge.timer2 > 50)) {
             settings.dodge.second = false;
             this.createDodge();
           }
@@ -231,7 +231,7 @@
             settings.dodge.first = false;
             this.createDodge();
           }
-          if (settings.dodge.timer2 >= 110 - (settings.dodge.offset / 2)) {
+          if (settings.dodge.timer2 >= 130 - (settings.dodge.offset / 2)) {
             this.createDodge();
           }
 
