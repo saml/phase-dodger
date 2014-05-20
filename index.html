@@ -79,10 +79,8 @@
 
       "killPlayer": function(player, dodge) {
         var blood = game.add.emitter(player.x + (player.width / 2), dodge.y, 200);
-        blood.makeParticles("blood");
+        blood.makeParticles("blooddrop");
         blood.start(true, 1000, 20);
-        game.state.pauseUpdate();
-
       },
 
       "preload": function() {
