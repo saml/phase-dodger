@@ -81,6 +81,10 @@
         var blood = game.add.emitter(player.x + (player.width / 2), dodge.y, 200);
         blood.makeParticles("blood");
         blood.start(true, 2000, 20);
+        collectibles.setAll("body.velocity.y", 0);
+        collectibles.setAll("body.gravity.y", 0);
+        dodges.setAll("body.velocity.y", 0);
+        game.tweens.pauseAll();
       },
 
       "moveLeft": function() {
@@ -97,7 +101,6 @@
       },
 
       "testMovement": function(touch) {
-        console.log(touch);
         var playerOffset = player.x + (player.width / 2);
         if (touch.position.x < playerOffset) {
           this.moveLeft();
