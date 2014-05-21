@@ -337,7 +337,7 @@
       "shareToTwitter": function() {
         window.open("http://twitter.com/intent/tweet" +
           "?source=tweetbutton&text=" + encodeURIComponent("I drank " + settings.global.score +
-          " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat") + "+" + encodeURIComponent(link), "Tweet Your Score",
+          " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat") + "+" + encodeURIComponent(window.location.href), "Tweet Your Score",
           "width=600,height=300,left=" + Math.ceil(($(window).width() / 2) - 300) + ",top=" + Math.ceil(($(window).height() / 2) - 127));
 
         // Omniture custom tracking
