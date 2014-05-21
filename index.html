@@ -32,17 +32,9 @@
       width: 100%;
       max-width: 417px;
     }
-
-    /*#loadingScreenImage {
-      display: block;
-      width: 100%;
-      height: auto;
-    }*/
   </style>
 
-  <article id="dodgeGame">
-    <!-- <img id="loadingScreenImage" src="http://pixel.nymag.com/imgs/daily/other/2014/04/04/loading.o.png/a_417x0.png" alt="Loading" /> -->
-  </article>
+  <article id="dodgeGame"></article>
   
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script src="js/phaser.js"></script>
@@ -261,6 +253,12 @@
       "preload": function() {
         game.load.image("progress", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUAQMAAADyauCJAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURf///6fEG8gAAAAPSURBVCjPY2AYBaOAgQEAAggAATy5/7MAAAAASUVORK5CYII=");
         game.stage.backgroundColor = "#cc803a";
+        // check if on mobile and adjust accordingly
+        if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
+          game.scale.maxWidth = window.innerWidth - 10;
+          game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
+          game.scale.setSize();
+        }
       },
 
       "create": function() {
@@ -278,7 +276,7 @@
 
       "preload": function() {
         this.loadText = game.add.text(game.world.centerX, game.world.centerY - 30, "Loading...", {
-          "font": "400 25px/1.5 Arcade-Normal, Arial, sans-serif",
+          "font": "400 15px/1.5 Arcade-Normal, Arial, sans-serif",
           "fill": "#fff"
         });
         this.loadText.anchor.setTo(0.5, 0.5);
@@ -313,12 +311,6 @@
       },
 
       "create": function() {
-        // check if on mobile and adjust accordingly
-        if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
-          game.scale.setShowAll();
-          game.scale.refresh();
-        }
-
         game.add.button(game.world.centerX - 100, 400, "START GAME", this.gamePress, this, 2, 1, 0);
       },
 
