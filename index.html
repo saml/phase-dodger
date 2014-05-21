@@ -150,10 +150,6 @@
         game.add.tween(dodge).to({"angle": 360}, 2000).loop().start();
       },
 
-      "preload": function() {
-        game.load.image("blood", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAHMIEHcKDXcIEXYKDXcJDXYJDXcKDgdccrgAAAAHdFJOUwAf3h7fvr1opIWIAAAAX0lEQVQI11XOMQqAQAwEwBU/cASxFwtbsbC/H9j5DznI9zWX3cKtliEkAb6cO5hxW1UPf4rQfRE6OZAcmJzY2bIF36x+YWJrBQNnKzTcYnFy7ddMmFz5mQmDhcBc8M8LmC8m0BaJpJMAAAAASUVORK5CYII=");
-      },
-
       "create": function() {
         // physics engine
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -176,12 +172,13 @@
         dodges.enableBody = true;
 
         // create the scoreboard
-        scoreboard = game.add.text(game.world.centerX + 20, 52,
+        scoreboard = game.add.text(game.world.centerX, 30,
           "SCORE: " + settings.global.score, {
-            "font": "400 20px/1 Arial, sans-serif",
+            "font": "400 15px/1 Arcade-Normal, sans-serif",
             "fill": "#fff",
             "align": "center"
           });
+        scoreboard.anchor.setTo(0.5, 0.5);
 
         // create global timer
         settings.global.timer = game.time.create(game);
@@ -283,11 +280,15 @@
         this.loadBar = game.add.sprite(game.world.centerX - 100, game.world.centerY - 10, "progress");
         game.load.setPreloadSprite(this.loadBar);
 
+        game.load.image("startButton", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK8AAAAmBAMAAABAA9ZWAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAwUExURdeSSosWDyYRD1IaBv/q4gwCAvzk2762q9Wnlj8wG9Jyb9ermpl2aQM3G+i4plFBLsrJ8AAAAAFHSURBVEjH3dU7TsQwEAbgQZaoM8sJSENr5Cu42JKGnsoNHU0uQJED0FAgGgq0HTUtJVfgCqnoYcZ2HrvSLraZiGV/KZ5EiT5Zk1ECEKIMBRQAlWPXdct29dxaa9tbWpxz16+Ii9qnwcVZQ6W5CdeXlAvYGoa1MlwBuo64Zfv+Jgsb7dz9HYGiMDdlN1yHkywYuM8j7FVaROGHDxsS4ZdNeEgCTI3gdojCpodZlof9lmHosV09eVsGNrPAPMd6Agc5wINUBqsIP36OW3ZXcIRbYUiYighTsdMtM1yf/g7WPfzld2xHuBaCY3oYpGEfvj9x8+DwRfaw+gnGMtgYWXgcuY1oWIPJXe9FAYwnM8CIfOxOKjw0OsKYnioVPse8/B0cm435SZP/HYwlqQ4SLpNT6Nlg/nfuEZw2c7PBsFdwlSpXme9h8vw3UMpaZ3XywM4AAAAASUVORK5CYII=");
         game.load.image("background", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaEAAAJYCAMAAAD8A6m8AAAAYFBMVEXSjjCQUSXGfCuaLxa6aCaXKxlhVlG0XSOSIhaOGhGrTh+PHBGcPjWjQBrLgy1XIAuLFg//7M/bw6LUkjGoeEnLjEuHgnxSGgZmIgmrlHCTj4nXkkqoo5y+tqsmEQ/kzKmPN/95AAAHF0lEQVR4Ae3d/07jRhSAUePY9Y+sXSC73TbdNO//lh2krUEpa5I4ODfx+f6yZAmQjuYOQZoh212k7be/p6dv293/IkRIhO4iQoQe5ozQ6ULb7zNGiND5EYo+5QhdS4cQIUKE7EGE7k2HECFChALsQYSsH0KECBG6wB5E6M/PbOAhRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiRIgQIUKECBEiROjeI0Tor7c9PR0+DE/jL+cRIvSUen0YnsZfEiJEyJQjdNuZcl9vvrsX2t58saccoRmEHt+WvVavj6smNKvQZqh5PK5mstAfN931hNZHCq2nC1lDhAgRIkSI0EcR8rtceCFriBAhQnMKPQYXItR2ZWghQskonhChTXAhQn3fZ5GFCKVyQoQIEVqIUNF2NaHrC9WpA6Ghvry+EKGXfiWUnyxEiBChPozQbzfR/EJVUfRBhP65hWYVGpAGoTqkEKHiP6GsarvIQoRSVXAhQu1NCxEiRIjQ0MWECBEitOq6149EVVVHEyKU6javlQGFCLWvQBmhX0eIECFChAgRKqoushChVHV1IUKHSs16vYosRCi1GCFChAgRKroyshChVEuIECFC9yZU5nkeVIjQUBZbiFATR4jQ0IHQwXm8oEKEUn0ZW4hQfroQIUKENsGFCBV5H1iI0MF5vIBChA7O40UWIpSqCBEiNEmojSBE6KXFCBEiRIhQ17YDUl6162hChA7O49UBhQi1r0AZIUKECBEiRIhQ6n2hTdXWhEILbXpC8YTWZdkNQjmheEKpklBwoRUhQoQuJtQQCi2UFUVHKLJQqj1ViBAhQmXf94QCCI0qZYRiCzU3I0SoaEtCkYVS3dxChAgRIkSI0IZQcKGi6AlFFkpVb+6/aAgFFCo2Q/maUAChL6lfCTWEAgi9RIgQIULLFHokFFuor7qGUCihw/9guMnXhGIJHZ6YLBpCEYXauxEiRIgQoaH3hdaEYgv1VbUiFFko1RGKJ1R3XUYoslCKUHChhhAhQoSWIpR3hGILbVpChAgd2VuhLCMUWCgRNU1OKLJQ6laECBXtilBkoVRLiNDsESJEiFBPKLhQkfeEggnVqbdGHaFgQofrqB2EGkKxhZqaUGShVEboIEKECBEiRIjQqm0rQpGFUjWh4EIrQtGEyrIkFFooRYgQIULHRYgQIUJNWRCKLJQiRGjeCBEiROhLilBQoSFChAhdSmhdd4QiC6VWhAgRIkSIEKELRogQIUIpQoQIEVqKUJYRiio0RIjQxAgRIkSIECFChAgdRogQIULnRIgQIUKECBEiRIgQIUJ1TSi0UIoQoXMiRIgQIUKECBEiRIgQIUKEyrIkFFooRYhQzAgRIkSIECFC346IEKHpESJEiNA4xnQhQoQIfX2v+YQIjTBcWYjQxwtlrO8jPbxEKKbQEKGLCI13z0KEJk85QpOJfv9gCU0XIvT1zD5diBAhU+6B0GShcZ+pRgnoboUIESJE6OGB0GShp4s0YQURIkSIEKHAESJEiBAhQoT2oxEiRGhahAiFjxCh/ZTuXYgQIVOOECFChPbjESJEyJQjRIjQwoX2x0SIECFTjhAhQteKECFChAgRIrQ/I0KEPjdTjhAhQqYcIUKmHCFCphwhQqYcIULLPPtAiBAhU44QIVOOECFTjhAhQoQIESJEiBChhQl9v0iECEWIECFChAgRIkSIECFChAgRIkSIEKHtxSN0sstY4YUI7S4eoRPbjUaIECFChAgRGonQ9hMjNNL2yMILEdp9YoRG2h0ZIUKECBEiRGgkQttZIvSz7cmFFyK0myVCP9udHCFChAgRIkRoJELbeVuo0Pb8wgsR2s3ZgoV250bo2AgRIkSIECFChAgtNEIXi9CPZUaIECFCdxQhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESK00AhFz5Qz5QgRihshQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBChbewUXojQj9iJECERIiRCIkRIhAiJkAgREiERIiRChERIhAiJkAgREiFCIqQPhbaxU7aPnSIIiRAhESIkQiJESIREiJAIERKh57chOE3o+TBChOJFSBOENF/PoxEiFDVCsg8REiERIiRCIkRIhAiJkAgRev6gy33tCX3uNyFEKGgiREiECImQCBESIUIiJEKEREiECOn5nQgREiERIiRChERIhAiJkAgREiFCIiRChERIhAiJECER0sdCkS97eL5KwX748EKE9rETIUIiREiERIiQCBESIREiNKUr/OWVECFCsg8REiFCIiRChESIkAiJECEREiFCIkRIhESIkAiJECERcuPFTJcJxLhbYbZrE+5NiNA+TiJESIQIiZAIERIhESIkQoRESIQIiZD+BQ1iqU/VicHDAAAAAElFTkSuQmCC");
         game.load.image("character", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAACBCAMAAAChKoe5AAAAM1BMVEX////Xq5oMAgKLFg8mEQ++tqvScm/Xkkr/6uJSGgbVp5b85NuZdmkDNxtRQS4/MBvouKa+RSB9AAAAAXRSTlMAQObYZgAAActJREFUeF7k0usKwyAMhuH+Sjz0sPu/2kkY/RxBF0PH3PZCWwvtQ0AXQ7G0+AIhef+8Uok+Jfb7OiUamklxEsxcLnk8+ozCEsRhhZFbgdDIrCjRrMAAYFRAaCU2sgzCWAwpALQCf0QRsRJyya7U8TQKBC6CU2GtGPdIH1O/omYaVZAahIhy5pdQvF5hVCvqKPcHyWe3khiUL1Ikk8LSW5Q6Zn6tBOk4U28+JaVakWzKfrSUY+8oUqXIx9u2hVJRzpfdrRCRT5G0cgaioyAoqKEgKCiVfkhJ67qGUG7pkwoRjSkglNIIRFchukgBYFcAPU+SHjn2SIw5FOTfo9bZr9cRTaugYGhBMysodwMws6JrE3+s3NutoxWGQSCIomlmBf//ixuQMCGr3cQxDaW5L4LCQVgEAbzqAbBtdWA9bSg4qZS8ESvG0Mz2OYKIprCIYM44pTAa4xXv2edo9CjsiGJfUsq7URQA00gF0JVSnwIMUOCUoFDpdqArRCQFB5WUEhdBWbv1LnFUSjcrJJaQc+5Q9v8zKsGkI2UpmLSgKHfx/YcyVatNiInKo5xNM9g1ivWlGWy0Yko0tC5XHsU3b/MbYboy12sf/ZDyKG9mwJhVhLjUAQAAAABJRU5ErkJggg==");
         game.load.image("dodge", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAAYFBMVEX///9pSBmMeEsnJSVXV1dUVFR4Uhy+vr6ZhFVBQUFNTU2wsLDLy8sFBQOUflFgQRViYmKHc0heXV2jjVtbWllJSUlQUE+9vb0hISEAAACSfFCRflNMTlSTfE2CcEf9/f0RIRXJAAAAAXRSTlMAQObYZgAAAb5JREFUeF7tl0mSwyAMRZsZz/OY6f63bGQcy51FQJWqXuWv/YyeJaD8Q00yH0nI8HIKGRbIzlT2IQofgKm+otJaN7y8FwATfQvmYNt1JcBkX1h5tR0HmOzLNGN8tU0Qxn56X6frwJUzplkQxn56X72VbFfwjoXF0xdWBlgDHBqSwkc80NeX7WDxbjxnV+a95A2rWCX2/gII3v6FkDdw2XV2e3jv715y5VUCMO+Oh5cKYQa+QbixR5no6zWSEHwA2uX5odA3AGNrsL9B3/NQ3Ky9ARzd3z/jeLlwxsC3RN/YjaBa1fPbyZeyBa/yqi5nXwo8qGEEbwKMZctatnwFbxzLqA82ykFmxmT9CN44IFGtkrWqTZ5Pcti8SxzNKN9ETXluaiXby74pHDxH+qo2m0wGK0PZ+8pzpO+UtaqWfmNojQdfpK+rfFhejtx4X1iZcNijrwFfOW7HEKsYXjPRvngAQoi+ePRConwN+i7nCyC+v+CL1w2E7Iuh+2Jo/X11pPtiPvL9+n59Ddl3dvDYpr2h+yJM9UW4V7Lv0Ze4slRpir4kWNatC/qS4FSOLuhLgB0NQV8KfER89JP1r793v1gaTgjXi0v+AAAAAElFTkSuQmCC");
         game.load.image("collect", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAvBAMAAAAGOGeZAAAAIVBMVEX////xkcvyms/1r9nyk8vwiceFNmXn5+dWFDz////ylcxZMYoeAAAAAXRSTlMAQObYZgAAAI9JREFUeF6VzTEKwzAMhWGtvkrnXqSDc4RCTmByA3fzUtvvtpWFqSIiDPm3Dx48gu2+v/H1iM+47ej5I5bY2Rhd/ebUTONNWLMYleG5G/Ob7wD8DUxzTNdEqAwlydPSSjGw9LgUFpqFi0dqUi5MpxyXW24JZeGWzg4YBtSJO9TNOGAaOpd8QyhGMT58a1f/AGcODFKIwS3DAAAAAElFTkSuQmCC");
         game.load.image("bonus", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAABLBAMAAADqjDgkAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAnUExURQAAAP/YAP///1YUPIU2ZYVOLvCJx7JzRfq7Vve9Uf39/fi9UfPBSwQeRdIAAAABdFJOUwBA5thmAAAA3ElEQVQ4y8XSUQrCMAwA0OgJlo/hr+wKxRNY8FtGbiD+Dx29gezDA/jpNbydTbvRZpvQVcGwn76maVgD4GNd8ScijQCqLeTQ8httiVDFb6TRqKrbTqL8G7NjhSKK76jrXo/7ozOIRD3dzi4MlvVOUoOkIjpprRusI2IxkrRLagNdtaeLknTgcyOyLQQyxpNSfauAuBnoiIJaEsTV9vbcQHyBXauQxFSrD0QxEckk/q/lDJE45/rwfcaPadNoTD6mTw4pVEyHZYYglzCDonlbRGJS00mM+e/pH/GMF29NBFXWRM0ozwAAAABJRU5ErkJggg==");
+        game.load.image("blood", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAHMIEHcKDXcIEXYKDXcJDXYJDXcKDgdccrgAAAAHdFJOUwAf3h7fvr1opIWIAAAAX0lEQVQI11XOMQqAQAwEwBU/cASxFwtbsbC/H9j5DznI9zWX3cKtliEkAb6cO5hxW1UPf4rQfRE6OZAcmJzY2bIF36x+YWJrBQNnKzTcYnFy7ddMmFz5mQmDhcBc8M8LmC8m0BaJpJMAAAAASUVORK5CYII=");
+        game.load.image("facebook", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ4AAAAlAQMAAACJRsKOAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURQAAAP///6XZn90AAAABdFJOUwBA5thmAAAAmklEQVQoz6XSQQ6DIBAF0Gm66NILeBRSz9VFY4/mUcZwgOIOA/orKWCKpJHwly9kJsMMUY8kmug8Xl+U5FaCLR3CBchHbIsQazM0ExZwz5Cs/mGnumXDGQZGflHTXYmnuqgHGzZy8LhaG/EdUIuNAvru2iEmzA5tguMPwu4vQb6mw1AzohYi1z2L+5hxogye/c/KbVbeUt0lfwA8eSwCXxL4pQAAAABJRU5ErkJggg==");
+        game.load.image("twitter", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ4AAAAlAQMAAACJRsKOAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURQAAAP///6XZn90AAAABdFJOUwBA5thmAAAAeUlEQVQoz6XSOwrAIAwG4ECHjF5A6FHr0XTyGPUExU5aOqQPRIpSq/XP9g2BPAAmSuIB6nEQkARbkEMW04AmR/6K02Y8eVrJnSWr0QZEZTwTTIwoUf3BJSBp/YEUkSBDiQ/cI86yjNdEd0+nbQnr95lj5zU7f6nvkw9kavhY4h1q4AAAAABJRU5ErkJggg==");
       },
 
       "create": function() {
@@ -304,14 +305,8 @@
         game.state.start("main");
       },
 
-      "preload": function() {
-
-        // // remove the loading screen
-        // document.getElementById("loadingScreenImage").remove();
-      },
-
       "create": function() {
-        game.add.button(game.world.centerX - 100, 400, "START GAME", this.gamePress, this, 2, 1, 0);
+        game.add.button(game.world.centerX - 100, 400, "startButton", this.gamePress, this);
       },
 
       "update": function() {
@@ -351,13 +346,9 @@
         //_gaq.push(["_trackEvent", "Vulture, Quiz", quizName, "Twitter Share"]);
       },
 
-      "preload": function() {
-
-      },
-
       "create": function() {
-        game.add.button(50, 200, "SHARE TO FACEBOOK", this.shareToFacebook, this, 2, 1, 0);
-        game.add.button(450, 200, "SHARE TO TWITTER", this.shareToTwitter, this, 2, 1, 0);
+        game.add.button(40, 200, "facebook", this.shareToFacebook, this);
+        game.add.button(220, 200, "twitter", this.shareToTwitter, this);
       },
 
       "update": function() {
