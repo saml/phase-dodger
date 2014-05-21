@@ -325,7 +325,7 @@
           "picture": "http://placekitten.com/190",
           "name": "'Game of Thrones' The Video Game",
           "caption": "All the intrigue, minus the violence. Oh, who are we kidding.",
-          "description": "I drank " + global.settings.score + " glasses of wine in Vulture's 'Game of Thrones' Video Game"
+          "description": "I drank " + settings.global.score + " glasses of wine in Vulture's 'Game of Thrones' Video Game"
         }, function(response){});
 
         // Omniture custom tracking
@@ -336,7 +336,7 @@
 
       "shareToTwitter": function() {
         window.open("http://twitter.com/intent/tweet" +
-          "?source=tweetbutton&text=" + encodeURIComponent("I drank " + global.settings.score +
+          "?source=tweetbutton&text=" + encodeURIComponent("I drank " + settings.global.score +
           " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat") + "+" + encodeURIComponent(link), "Tweet Your Score",
           "width=600,height=300,left=" + Math.ceil(($(window).width() / 2) - 300) + ",top=" + Math.ceil(($(window).height() / 2) - 127));
 
