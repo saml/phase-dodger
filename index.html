@@ -167,6 +167,33 @@
         game.add.tween(dodge).to({"angle": 360}, 2000).loop().start();
       },
 
+      "preload": function() {
+        settings = {
+          "global": {
+            "timer": {},
+            "score": 0
+          },
+          "player": {
+            "killed": false,
+            "speed": 400
+          },
+          "collectible": {
+            "first": true,
+            "speed": 200,
+            "timer": 0,
+            "offset": 1
+          },
+          "dodge": {
+            "first": true,
+            "second": true,
+            "speed": 200,
+            "timer1": 0,
+            "timer2": 0,
+            "offset": 1
+          }
+        };
+      },
+
       "create": function() {
         // physics engine
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -266,7 +293,7 @@
     var _BOOT = {
       "preload": function() {
         game.load.image("progress", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUAQMAAADyauCJAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURf///6fEG8gAAAAPSURBVCjPY2AYBaOAgQEAAggAATy5/7MAAAAASUVORK5CYII=");
-        game.stage.backgroundColor = "#cc803a";
+        game.stage.backgroundColor = "#d7924a";
         // check if on mobile and adjust accordingly
         if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
           game.scale.maxWidth = window.innerWidth - 10;
@@ -319,16 +346,11 @@
       */
     var _START = {
       "gamePress": function() {
-        console.log("Button Pressed");
         game.state.start("main");
       },
 
       "create": function() {
         game.add.button(game.world.centerX - 100, 400, "startButton", this.gamePress, this);
-      },
-
-      "update": function() {
-
       }
     };
 
@@ -336,11 +358,29 @@
       * The game over screen
       */
     var _GAMEOVER = {
+      "finalScore": {},
+      "shareScore": {},
       "facebook": {},
-
       "twitter": {},
-
       "tyrion": {},
+      "gameOver": {},
+      "subtext": {},
+      "tryAgain": {},
+      "bigText": {
+        "font": "400 27px/1.5 Arcade-Normal, Arial, sans-serif",
+        "fill": "#fff",
+        "align": "center"
+      },
+      "mediumText": {
+        "font": "400 20px/1.5 Arcade-Normal, Arial, sans-serif",
+        "fill": "#fff",
+        "align": "center"
+      },
+      "smallText": {
+        "font": "400 16px/1.5 Arcade-Normal, Arial, sans-serif",
+        "fill": "#fff",
+        "align": "center"
+      },
 
       "shareToFacebook": function() {
         FB.ui({
@@ -370,20 +410,57 @@
         //_gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Twitter Share"]);
       },
 
+      "restartGame": function() {
+        game.state.start("main");
+      },
+
       "preload": function() {
-        this.facebook = game.add.button(40, 200, "facebook", this.shareToFacebook, this);
+        this.finalScore = game.add.text(game.world.centerX, 65, "SCORE " + settings.global.score, this.bigText);
+        this.finalScore.anchor.setTo(0.5, 0.5);
+        this.finalScore.alpha = 0;
+
+        this.shareScore = game.add.text(game.world.centerX, 140, "SHARE YOUR SCORE:", this.mediumText);
+        this.shareScore.anchor.setTo(0.5, 0.5);
+        this.shareScore.alpha = 0;
+        this.facebook = game.add.button(40, 160, "facebook", this.shareToFacebook, this);
         this.facebook.alpha = 0;
-        this.twitter = game.add.button(220, 200, "twitter", this.shareToTwitter, this);
+        this.twitter = game.add.button(220, 160, "twitter", this.shareToTwitter, this);
         this.twitter.alpha = 0;
+
+        this.gameOver = game.add.text(game.world.centerX, game.world.centerY, "GAME OVER", this.bigText);
+        this.gameOver.anchor.setTo(0.5, 0.5);
+        this.gameOver.alpha = 0;
+        this.subtext = game.add.text(game.world.centerX, game.world.centerY + 30, "(YOU'VE BEEN STABBED)", this.smallText);
+        this.subtext.anchor.setTo(0.5, 0.5);
+        this.subtext.alpha = 0;
+
+        this.tryAgain = game.add.text(game.world.centerX, game.world.height - 65, "TRY AGAIN", this.mediumText);
+        this.tryAgain.anchor.setTo(0.5, 0.5);
+        this.tryAgain.alpha = 0;
       },
 
       "create": function() {
         this.tyrion = game.add.sprite(game.world.centerX - 72, game.world.Y - 97, "dead");
-        game.add.tween(this.tyrion).to({"y": 393}, 2000, Phaser.Easing.Bounce.Out, true, 0, 0, false);
+        game.add.tween(this.tyrion).to({"y": 405}, 2000, Phaser.Easing.Bounce.Out, true, 0, 0, false);
 
-        game.add.tween(this.facebook).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1000, 0, false);
-        game.add.tween(this.twitter).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1000, 0, false);
+        game.add.tween(this.finalScore).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1000, 0, false);
 
+        game.add.tween(this.shareScore).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1500, 0, false);
+        game.add.tween(this.facebook).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1700, 0, false);
+        game.add.tween(this.twitter).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1700, 0, false);
+
+        game.add.tween(this.gameOver).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 2200, 0, false);
+        game.add.tween(this.subtext).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 2400, 0, false);
+
+        game.add.tween(this.tryAgain).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 2600, 0, false)
+          .to({"alpha": 0}, 500, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
+
+        var keys = game.input.keyboard.createCursorKeys();
+        keys.left.onUp.add(this.restartGame, this);
+        keys.right.onUp.add(this.restartGame, this);
+        keys.up.onUp.add(this.restartGame, this);
+        keys.down.onUp.add(this.restartGame, this);
+        game.input.onUp.add(this.restartGame, this);
 
         // send score to Google Analytics
         console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Score: " + settings.global.score);
