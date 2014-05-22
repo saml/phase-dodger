@@ -189,13 +189,13 @@
         dodges.enableBody = true;
 
         // create the scoreboard
-        scoreboard = game.add.text(game.world.centerX, 30,
+        scoreboard = game.add.text(205, 30,
           "SCORE: " + settings.global.score, {
             "font": "400 15px/1 Arcade-Normal, sans-serif",
             "fill": "#fff",
-            "align": "center"
+            "align": "right"
           });
-        scoreboard.anchor.setTo(0.5, 0.5);
+        scoreboard.anchor.setTo(0, 0.5);
 
         // create global timer
         settings.global.timer = game.time.create(game);
@@ -336,6 +336,12 @@
       * The game over screen
       */
     var _GAMEOVER = {
+      "facebook": {},
+
+      "twitter": {},
+
+      "tyrion": {},
+
       "shareToFacebook": function() {
         FB.ui({
           "method": "feed",
@@ -364,12 +370,20 @@
         //_gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Twitter Share"]);
       },
 
-      "create": function() {
-        var tyrion = game.add.sprite(game.world.centerX - 72, game.world.Y - 97, "dead");
-        game.add.tween(tyrion).to({"y": 393}, 2000, Phaser.Easing.Bounce.Out, true, 0, 0, false);
+      "preload": function() {
+        this.facebook = game.add.button(40, 200, "facebook", this.shareToFacebook, this);
+        this.facebook.alpha = 0;
+        this.twitter = game.add.button(220, 200, "twitter", this.shareToTwitter, this);
+        this.twitter.alpha = 0;
+      },
 
-        game.add.button(40, 200, "facebook", this.shareToFacebook, this);
-        game.add.button(220, 200, "twitter", this.shareToTwitter, this);
+      "create": function() {
+        this.tyrion = game.add.sprite(game.world.centerX - 72, game.world.Y - 97, "dead");
+        game.add.tween(this.tyrion).to({"y": 393}, 2000, Phaser.Easing.Bounce.Out, true, 0, 0, false);
+
+        game.add.tween(this.facebook).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1000, 0, false);
+        game.add.tween(this.twitter).to({"alpha": 1}, 500, Phaser.Easing.Linear.None, true, 1000, 0, false);
+
 
         // send score to Google Analytics
         console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Score: " + settings.global.score);
