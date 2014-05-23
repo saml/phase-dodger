@@ -122,7 +122,7 @@
       "generateCatchPhrase": function() {
         var phrase = game.add.sprite(player.x + player.width + 23, player.y - 20, "catchPhrase" + (game.time.now % 2 === 0 ? "" : "2"));
         phrase.anchor.setTo(0.5, 0.5);
-        var phraseTween = game.add.tween(phrase).to({"y": phrase.y - 15}, 300, Phaser.Easing.Linear.None, true, 0, 0, false)
+        var phraseTween = game.add.tween(phrase).to({"y": phrase.y - 15}, 600, Phaser.Easing.Linear.None, true, 0, 0, false)
           .to({"alpha": 0}, 200, Phaser.Easing.Linear.None, true, 0, 0, false);
         phraseTween._lastChild.onComplete.add(function() {
           phrase.kill();
@@ -140,7 +140,6 @@
         chalice.kill();
         settings.global.score += 1000;
         scoreboard.text = "SCORE: " + settings.global.score;
-        this.popUpText("+1000", true);
         this.generateCatchPhrase();
       },
 
