@@ -435,7 +435,7 @@
         "align": "center"
       },
       "smallText": {
-        "font": "400 16px/1.5 Arcade-Normal, Arial, sans-serif",
+        "font": "400 10px/1.5 Arcade-Normal, Arial, sans-serif",
         "fill": "#fff",
         "align": "center"
       },
@@ -445,9 +445,9 @@
           "method": "feed",
           "link": window.location.href,
           "picture": "http://placekitten.com/190",
-          "name": "'Game of Thrones' The Video Game",
+          "name": "“Game of Thrones” The Video Game",
           "caption": "All the intrigue, minus the violence. Oh, who are we kidding.",
-          "description": "I drank " + settings.global.score + " glasses of wine in Vulture's 'Game of Thrones' Video Game"
+          "description": "I drank " + settings.global.score + " glasses of wine in Vulture's “Game of Thrones” Video Game"
         }, function(response){});
 
         // Omniture custom tracking
@@ -508,7 +508,7 @@
         this.gameOver = game.add.text(game.world.centerX, game.world.centerY, "GAME OVER", this.bigText);
         this.gameOver.anchor.setTo(0.5, 0.5);
         this.gameOver.alpha = 0;
-        this.subtext = game.add.text(game.world.centerX, game.world.centerY + 30, "(YOU'VE BEEN STABBED)", this.smallText);
+        this.subtext = game.add.text(game.world.centerX, game.world.centerY + 35, "“IT’S NOT EASY BEING DRUNK ALL THE TIME.\nIF IT WERE EASY, EVERYONE WOULD DO IT.”", this.smallText);
         this.subtext.anchor.setTo(0.5, 0.5);
         this.subtext.alpha = 0;
 
