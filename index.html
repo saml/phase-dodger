@@ -100,7 +100,7 @@
             "align": "center"
           });
         tempLabel.anchor.setTo(0.5, 0.5);
-        var tempTween = game.add.tween(tempLabel).to((!shift ? {"y": tempLabel.y - 20} : {"x": tempLabel.x - 50}), 300, Phaser.Easing.Linear.None, true, 0, 0, false)
+        var tempTween = game.add.tween(tempLabel).to((!shift ? {"y": tempLabel.y - 20} : {"x": tempLabel.x - 50, "y": tempLabel.y - 20}), (!shift ? 300 : 600), Phaser.Easing.Linear.None, true, 0, 0, false)
           .to({"alpha": 0}, 200, Phaser.Easing.Linear.None, true, 0, 0, false);
         tempTween._lastChild.onComplete.add(function() {
           tempLabel.destroy();
