@@ -87,7 +87,12 @@
       * The main game state
       */
     var _MAIN = {
-      "popUpText": function(text) {
+      /**
+        * The text that appears over a character's head
+        * @param{String} text The text to display above head
+        * @param{boolean} bonus Whether this is a bonus catch phrase or hiccup
+        */
+      "popUpText": function(text, bonus) {
         var tempLabel = game.add.text(player.x + (player.width / 2), player.y, text, {
             "font": "400 15px/1 Arcade-Normal, sans-serif",
             "fill": "#fff",
@@ -102,7 +107,7 @@
         // increment how many times user caught something
         ++settings.global.getCount;
         // display the hiccup after every fifth drink/bonus caught
-        if (settings.global.getCount === 5) {
+        if ((settings.global.getCount === 5) && !bonus) {
           settings.global.getCount = 0;
           var tempSprite = game.add.sprite(player.x + player.width + 25, player.y + 25, "hiccup");
           tempSprite.anchor.setTo(0.5, 0.5);
@@ -114,18 +119,29 @@
         }
       },
 
+      "generateCatchPhrase": function() {
+        var phrase = game.add.sprite(player.x + player.width + 23, player.y - 20, "catchPhrase");
+        phrase.anchor.setTo(0.5, 0.5);
+        var phraseTween = game.add.tween(phrase).to({"y": phrase.y - 15}, 300, Phaser.Easing.Linear.None, true, 0, 0, false)
+          .to({"alpha": 0}, 200, Phaser.Easing.Linear.None, true, 0, 0, false);
+        phraseTween._lastChild.onComplete.add(function() {
+          phrase.kill();
+        });
+      },
+
       "addCollectible": function(player, collectible) {
         collectible.kill();
         settings.global.score += 100;
         scoreboard.text = "SCORE: " + settings.global.score;
-        this.popUpText("+100");
+        this.popUpText("+100", false);
       },
 
       "collectBonus": function(player, chalice) {
         chalice.kill();
         settings.global.score += 1000;
         scoreboard.text = "SCORE: " + settings.global.score;
-        this.popUpText("+1000");
+        this.popUpText("+1000", true);
+        this.generateCatchPhrase();
       },
 
       "killPlayer": function(player, dodge) {
@@ -306,7 +322,7 @@
         }, this);
 
         // generate bonus loop
-        game.time.events.loop(15000 - (settings.bonus.offset / 2), function() {
+        game.time.events.loop(1500 - (settings.bonus.offset / 2), function() {
           this.createBonus();
         }, this);
 
@@ -383,6 +399,7 @@
         game.load.image("collect", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAvBAMAAAAGOGeZAAAAIVBMVEX////xkcvyms/1r9nyk8vwiceFNmXn5+dWFDz////ylcxZMYoeAAAAAXRSTlMAQObYZgAAAI9JREFUeF6VzTEKwzAMhWGtvkrnXqSDc4RCTmByA3fzUtvvtpWFqSIiDPm3Dx48gu2+v/H1iM+47ej5I5bY2Rhd/ebUTONNWLMYleG5G/Ob7wD8DUxzTNdEqAwlydPSSjGw9LgUFpqFi0dqUi5MpxyXW24JZeGWzg4YBtSJO9TNOGAaOpd8QyhGMT58a1f/AGcODFKIwS3DAAAAAElFTkSuQmCC");
         game.load.image("hiccup", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAAuCAMAAABHyVrtAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAP///yYRD7KurdTS0npzc+bl5V5UU40lYh4AAAABdFJOUwBA5thmAAAAoklEQVRIx+2W2w6DIAxAe6X//8e2CIvJXBTYhiaeB6DAAQIYBKhgA/DORB2buYqOnczXcYhHf5FESpZyulKbavGjrkTRg4k4pytSmpwG3efzWPOUSckiVD6tbwqJyWI92qeX+qOt826mqjZNH1z8ro7iR7AJz+jCHAfHHFeIzSJk+eG1eb73/+m3fibu/kBf4deoZZBjHbr4ig69jOswQKO+ALqgCxVVtM1sAAAAAElFTkSuQmCC");
         game.load.spritesheet("bonus", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABLCAMAAADkpzHbAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAzUExURQAAAFYUPIU2ZYVOLv/////YAP////////////////CJx7JzRfq7Vve9Uf39/fi9UfPBS+b/SSEAAAAKdFJOUwD///8B//8EFwK9KwdLAAABRUlEQVRYw+3W2RKDIAwF0CDVLtjl/7+2FFEQQxKXTqljZuoDnl4QcIGmaQCgOw51cUf0VLYdbT1vFXRaEIQ3cafw9sKCshe8yWT/NEiCFnRWYBD9h1lbpLSgYib7+o1V21PVZMnNzoNaW8/7vW1f9tca8zmrbcVBrHHoFpdDWis1DuIMgrwhg6YmQlVXDqlMUN4MqCeGCKJMj6qoL6PxINJ8kKlCOaTUJIg1CQqDzgfhJkX9clBBqHHI1mQ5kg3JGr//DbauyX3EmATZ1WCDcOPRMAfKDxoJok2YTBVqSkQGwnKSQaxJETZokQH/bKH6Ehn/BGSDWNMjrfODFpnBRbsj++ZiTJgETSGJAfTVsMCMFKwx3whaZyK21sBWptwgktVzJrKQoFqw/+v599Hvg/LfhvNMaUHcl6/UHEGCoKP+tB6rzBs7Tit19+mcsgAAAABJRU5ErkJggg==", 36, 75, 2);
+        game.load.image("catchPhrase", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHwAAABcCAMAAACbbCG6AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAP///yYRD3dwb9jW1rKurZ6amUg7O/X4pfEAAAABdFJOUwBA5thmAAAB4ElEQVRo3u2a7aKDIAiGU8Du/45PmhmUla3SncX7Z5Hpk19EtK5byjym7lgKfxPcVJHCFd4WbqpL4QpvADcNtYY7AJAHBrzQMCOZCElurJIkTCyDg7VWHhjrNVW3lptok2CskiTME3BLhmIDgQbBxPmOiLc3G/P9bvWjBO7QRTgOfRtGlKC3hDOcj+TdcDl0rIFcM9XgbvjBURtwVhrrIt4ETwtuc85ZKVsgJ+AEFqhPcPLqYwNE0XSUhcdynE0YLiUq32o0rHdYbpf8fB7M+fZG24T7SZvhYRJHk6Y+lMLRl37qZPbNgtWOZ53MNi1se69x22fgzL3GKi6cvQFevNpZ3ROrvelTTeFfCRfxwSJ6eBy+8t45//cMvOAJq/Aq8GVsURW+/9h8GM6iB11wvwhfBBN14Rn3qo9Uhd8MF9kFmWxYZyZkVsOX0yW48N7Sma8zE9IdYMg0fA4f2y1+Y2EXX4bHzMQ0kiXw9J53GV6QbFi9sVBLuMOGcBbMVoaTE/C9MON+eNp9NzgZIh8omSknUZIcSDm8yz0/vc/lC/n+nB+nnoed3qfoYZmZwHAYzrlc4u0q/BH3qp85Xg3XD7kKfxtc/6TzVvhzN/Lf4V0tKfwL4F1dKbwpvGuhX4b/AaFxLjt4uoaRAAAAAElFTkSuQmCC");
         game.load.image("blood", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURQAAAHMIEHcKDXcIEXYKDXcJDXYJDXcKDgdccrgAAAAHdFJOUwAf3h7fvr1opIWIAAAAX0lEQVQI11XOMQqAQAwEwBU/cASxFwtbsbC/H9j5DznI9zWX3cKtliEkAb6cO5hxW1UPf4rQfRE6OZAcmJzY2bIF36x+YWJrBQNnKzTcYnFy7ddMmFz5mQmDhcBc8M8LmC8m0BaJpJMAAAAASUVORK5CYII=");
         game.load.image("dead", "data:image/png;base64,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");
         game.load.image("facebook", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ4AAAAlAQMAAACJRsKOAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURQAAAP///6XZn90AAAABdFJOUwBA5thmAAAAmklEQVQoz6XSQQ6DIBAF0Gm66NILeBRSz9VFY4/mUcZwgOIOA/orKWCKpJHwly9kJsMMUY8kmug8Xl+U5FaCLR3CBchHbIsQazM0ExZwz5Cs/mGnumXDGQZGflHTXYmnuqgHGzZy8LhaG/EdUIuNAvru2iEmzA5tguMPwu4vQb6mw1AzohYi1z2L+5hxogye/c/KbVbeUt0lfwA8eSwCXxL4pQAAAABJRU5ErkJggg==");
@@ -435,7 +452,7 @@
         "align": "center"
       },
       "smallText": {
-        "font": "400 10px/1.5 Arcade-Normal, Arial, sans-serif",
+        "font": "400 12px/1.5 Arcade-Normal, Arial, sans-serif",
         "fill": "#fff",
         "align": "center"
       },
@@ -505,10 +522,10 @@
         this.twitter = game.add.button(220, 160, "twitter", this.shareToTwitter, this);
         this.twitter.alpha = 0;
 
-        this.gameOver = game.add.text(game.world.centerX, game.world.centerY, "GAME OVER", this.bigText);
+        this.gameOver = game.add.text(game.world.centerX, game.world.centerY - 10, "GAME OVER", this.bigText);
         this.gameOver.anchor.setTo(0.5, 0.5);
         this.gameOver.alpha = 0;
-        this.subtext = game.add.text(game.world.centerX, game.world.centerY + 35, "“IT’S NOT EASY BEING DRUNK ALL THE TIME.\nIF IT WERE EASY, EVERYONE WOULD DO IT.”", this.smallText);
+        this.subtext = game.add.text(game.world.centerX, game.world.centerY + 40, "“IT’S NOT EASY BEING DRUNK\nALL THE TIME. IF IT WERE EASY,\nEVERYONE WOULD DO IT.”", this.smallText);
         this.subtext.anchor.setTo(0.5, 0.5);
         this.subtext.alpha = 0;
 
