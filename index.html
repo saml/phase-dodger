@@ -47,6 +47,7 @@
 
       #dodgeGame {
         display: none;
+        margin-left: -8px;
       }
     }
   </style>
@@ -101,7 +102,7 @@
       theGame.style.display = "block";
       theGame.scrollIntoView();
     };
-    if (/\/m\//.test(window.location.href)) {
+    if (/\/m\//.test(window.location.href) || window.innerWidth < 800) {
       gameLauncher = document.getElementById("dodgeGameMobileTap");
       gameLauncher.addEventListener("click", launchTheGame, false);
     }
@@ -448,10 +449,16 @@
         game.load.image("progress", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUAQMAAADyauCJAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURf///6fEG8gAAAAPSURBVCjPY2AYBaOAgQEAAggAATy5/7MAAAAASUVORK5CYII=");
         game.stage.backgroundColor = "#d7924a";
         // check if on mobile and adjust accordingly
-        if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
+        if (/\/m\//.test(window.location.href)) {
           settings.global.mobile = true;
-          game.scale.maxWidth = window.innerWidth - 25;
-          game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
+          if (window.innerHeight * (game.height / game.width) > 305) {
+            game.scale.maxWidth = 305;
+            game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
+          }
+          else {
+            game.scale.maxHeight = window.innerHeight;
+            game.scale.maxWidth = game.scale.maxHeight * (game.height / game.width);
+          }
           game.scale.setSize();
           console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile");
           // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile"]);
@@ -623,7 +630,12 @@
         this.subtext.anchor.setTo(0.5, 0.5);
         this.subtext.alpha = 0;
 
-        this.tryAgain = game.add.sprite(game.world.centerX, game.world.height - 65, "tryAgain");
+        if (settings.global.mobile) {
+          this.tryAgain = game.add.text(game.world.centerX, game.world.height - 65, "TRY AGAIN", this.mediumText);
+        }
+        else {
+          this.tryAgain = game.add.sprite(game.world.centerX, game.world.height - 65, "tryAgain");
+        }
         this.tryAgain.anchor.setTo(0.5, 0.5);
         this.tryAgain.alpha = 0;
       },

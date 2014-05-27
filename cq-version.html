@@ -24,6 +24,7 @@
     }
     #dodgeGame {
       display: none;
+      margin-left: -8px;
     }
   }
 </style>
@@ -76,7 +77,7 @@
       theGame.style.display = "block";
       theGame.scrollIntoView();
     };
-    if (/\/m\//.test(window.location.href)) {
+    if (/\/m\//.test(window.location.href) || window.innerWidth < 800) {
       gameLauncher = document.getElementById("dodgeGameMobileTap");
       gameLauncher.addEventListener("click", launchTheGame, false);
     }
@@ -124,6 +125,7 @@
             });
         }
         tempLabel.anchor.setTo(0.5, 0.5);
+        // if the player has enough space on the right, display it there
         if (!leftSide) {
           tempTween = game.add.tween(tempLabel).to(
             (!shift ? {"y": tempLabel.y - 20} : {"x": tempLabel.x - 35, "y": tempLabel.y - 58}),
@@ -131,6 +133,7 @@
             Phaser.Easing.Linear.None, true, 0, 0, false)
             .to({"alpha": 0}, 200, Phaser.Easing.Linear.None, true, 0, 0, false);
         }
+        // else, display it on the left
         else {
           tempTween = game.add.tween(tempLabel).to(
             (!shift ? {"y": tempLabel.y - 20} : {"x": tempLabel.x + player.width + 35, "y": tempLabel.y - 58}),
@@ -147,9 +150,11 @@
         if ((settings.global.getCount === 5) && !bonus) {
           settings.global.getCount = 0;
           var tempSprite;
+          // if the player has enough space on the right, display it there
           if (!leftSide) {
             tempSprite = game.add.sprite(player.x + player.width + 25, player.y + 25, "hiccup");
           }
+          // else, display it on the left
           else {
             tempSprite = game.add.sprite(player.x - 30, player.y + 25, "hiccupAlt");
           }
@@ -419,13 +424,19 @@
         game.load.image("progress", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAAUAQMAAADyauCJAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURf///6fEG8gAAAAPSURBVCjPY2AYBaOAgQEAAggAATy5/7MAAAAASUVORK5CYII=");
         game.stage.backgroundColor = "#d7924a";
         // check if on mobile and adjust accordingly
-        if (game.scale.isPortrait || /\/m\//.test(window.location.href)) {
+        if (/\/m\//.test(window.location.href)) {
           settings.global.mobile = true;
-          game.scale.maxWidth = window.innerWidth - 25;
-          game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
+          if (window.innerHeight * (game.height / game.width) > 305) {
+            game.scale.maxWidth = 305;
+            game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
+          }
+          else {
+            game.scale.maxHeight = window.innerHeight;
+            game.scale.maxWidth = game.scale.maxHeight * (game.height / game.width);
+          }
           game.scale.setSize();
           console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile");
-          // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile"]);
+          _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile"]);
         }
       },
 
@@ -482,7 +493,7 @@
     var _START = {
       "gamePress": function() {
         console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Start Game");
-        // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Start Game"]);
+        _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Start Game"]);
         game.state.start("main");
       },
 
@@ -535,7 +546,7 @@
         // Omniture custom tracking
         //G.readOmnitureOnPageView(this, "38", link + " Facebook Customized Share");
         // Google Analytics Event tracking
-        //_gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Facebook Share"]);
+        _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Facebook Share"]);
       },
 
       "shareToTwitter": function() {
@@ -555,12 +566,12 @@
         // Omniture custom tracking
         //G.readOmnitureOnPageView(this, "39", link + " Twitter Customized Share");
         // Google Analytics Event tracking
-        //_gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Twitter Share"]);
+        _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Twitter Share"]);
       },
 
       "restartGame": function() {
         console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Key");
-        // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Key"]);
+        _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Key"]);
         // stop all the timer loops from generating new objects
         game.time.reset();
         game.state.start("main");
@@ -569,7 +580,7 @@
       "restartGameTap": function(tap) {
         if (!tap.targetObject) {
           console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Tap");
-          // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Tap"]);
+          _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Restart Game, Tap"]);
           game.state.start("main");
         }
       },
@@ -594,7 +605,12 @@
         this.subtext.anchor.setTo(0.5, 0.5);
         this.subtext.alpha = 0;
 
-        this.tryAgain = game.add.sprite(game.world.centerX, game.world.height - 65, "tryAgain");
+        if (settings.global.mobile) {
+          this.tryAgain = game.add.text(game.world.centerX, game.world.height - 65, "TRY AGAIN", this.mediumText);
+        }
+        else {
+          this.tryAgain = game.add.sprite(game.world.centerX, game.world.height - 65, "tryAgain");
+        }
         this.tryAgain.anchor.setTo(0.5, 0.5);
         this.tryAgain.alpha = 0;
       },
@@ -624,7 +640,7 @@
 
         // send score to Google Analytics
         console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Score: " + settings.global.score);
-        // _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Score: " + settings.global.score]);
+        _gaq.push(["_trackEvent", "Vulture, Video Game", "Game of Thrones", "Score: " + settings.global.score]);
       }
     };
 
