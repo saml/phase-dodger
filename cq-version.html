@@ -155,6 +155,13 @@
       "stopMoving": function() {
         player.body.velocity.x = 0;
         player.animations.stop();
+        // if the user is using two buttons to move, where both pressed, account for that
+        if (cursors.left.isDown) {
+          this.moveLeft();
+        }
+        else if (cursors.right.isDown) {
+          this.moveRight();
+        }
       },
 
       "testMovement": function(touch) {
@@ -263,33 +270,37 @@
         scoreboard.anchor.setTo(0, 0.5);
 
         // increment collectible timer
-        game.time.events.loop(2500, function() {
+        game.time.events.loop(200, function() {
           ++settings.collectible.offset;
         }, this);
 
         // increment bonus timer
-        game.time.events.loop(10000, function() {
+        game.time.events.loop(1000, function() {
           ++settings.bonus.offset;
         }, this);
 
         // increment dodge timer
-        game.time.events.loop(2500, function() {
+        game.time.events.loop(200, function() {
           ++settings.dodge.offset;
         }, this);
 
         // add the first collectible and generate a loop
         this.createCollectible();
-        game.time.events.loop(2500 - (settings.collectible.offset / 2), function() {
+        game.time.events.loop(2000 - (settings.collectible.offset / 2), function() {
+          this.createCollectible();
+        }, this);
+        // generate second collectible
+        game.time.events.loop(4500 - (settings.collectible.offset / 2), function() {
           this.createCollectible();
         }, this);
 
         // add first dodge and generate loop
         this.createDodge();
-        game.time.events.loop(2000 - (settings.dodge.offset / 2), function() {
+        game.time.events.loop(2500 - (settings.dodge.offset / 2), function() {
           this.createDodge();
         }, this);
         // generate second dodge loop
-        game.time.events.loop(3000 - (settings.dodge.offset / 2), function() {
+        game.time.events.loop(2000 - (settings.dodge.offset / 2), function() {
           this.createDodge();
         }, this);
 
