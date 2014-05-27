@@ -184,6 +184,13 @@
       "stopMoving": function() {
         player.body.velocity.x = 0;
         player.animations.stop();
+        // if the user is using two buttons to move, where both pressed, account for that
+        if (cursors.left.isDown) {
+          this.moveLeft();
+        }
+        else if (cursors.right.isDown) {
+          this.moveRight();
+        }
       },
 
       "testMovement": function(touch) {
