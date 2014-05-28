@@ -610,7 +610,7 @@
           tempTween = game.add.tween(self.tutorialText).to({"alpha": 0}, 500, Phaser.Easing.Linear.NONE, true, 0, 0, false);
           tempTween._lastChild.onComplete.add(function() {
             self.hitCount = 1;
-            self.tutorialText.text = "TAP AND\n  HOLD\nTO MOVE\n RIGHT";
+            self.tutorialText.text = "TAP AND\nHOLD\nTO MOVE\nRIGHT";
             self.tutorialText.x = game.world.width - self.tutorialText.width - 45;
             game.add.tween(self.tutorialText).to({"alpha": 1}, 500, Phaser.Easing.Linear.NONE, true, 0, 0, false);
             game.add.tween(self.hit).to({"alpha": 1}, 500, Phaser.Easing.Linear.NONE, true, 0, 0, false);
@@ -655,10 +655,10 @@
         // main game background
         game.add.sprite(0, 0, "background");
 
-        this.tutorialText = game.add.text(game.world.x + 30, game.world.centerY + 140, "TAP AND\n  HOLD\nTO MOVE\n  LEFT", {
+        this.tutorialText = game.add.text(game.world.x + 30, game.world.centerY + 140, "TAP AND\nHOLD\nTO MOVE\nLEFT", {
           "font": "400 11px/1.5 Arcade-Normal, Arial, sans-serif",
           "fill": "#fff",
-          "textAlign": "center"
+          "align": "center"
         });
 
         // create the player
