@@ -24,7 +24,7 @@
     }
     #dodgeGame {
       display: none;
-      margin-left: -8px;
+      margin-left: -13px;
     }
   }
 </style>
@@ -353,7 +353,7 @@
         scoreboard.anchor.setTo(0, 0.5);
 
         // increment collectible timer
-        game.time.events.loop(200, function() {
+        game.time.events.loop(300, function() {
           ++settings.collectible.offset;
         }, this);
 
@@ -363,7 +363,7 @@
         }, this);
 
         // increment dodge timer
-        game.time.events.loop(200, function() {
+        game.time.events.loop(500, function() {
           ++settings.dodge.offset;
         }, this);
 
@@ -379,11 +379,11 @@
 
         // add first dodge and generate loop
         this.createDodge();
-        game.time.events.loop(2500 - (settings.dodge.offset / 2), function() {
+        game.time.events.loop(3500 - (settings.dodge.offset / 2), function() {
           this.createDodge();
         }, this);
         // generate second dodge loop
-        game.time.events.loop(2000 - (settings.dodge.offset / 2), function() {
+        game.time.events.loop(3000 - (settings.dodge.offset / 2), function() {
           this.createDodge();
         }, this);
 
@@ -417,7 +417,7 @@
     };
 
     /**
-      * Pre-load screen
+      * Pre-load screen, boot sequence
       */
     var _BOOT = {
       "preload": function() {
@@ -426,13 +426,15 @@
         // check if on mobile and adjust accordingly
         if (/\/m\//.test(window.location.href)) {
           settings.global.mobile = true;
-          if (window.innerHeight * (game.height / game.width) > 305) {
+          // scale to height, but if height would make width too large, base it on width instead
+          if ((window.innerHeight * (game.width / game.height) > 305) || (window.innerHeight >= 600)) {
             game.scale.maxWidth = 305;
             game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
           }
+          // else, scaled based on height
           else {
             game.scale.maxHeight = window.innerHeight;
-            game.scale.maxWidth = game.scale.maxHeight * (game.height / game.width);
+            game.scale.maxWidth = game.scale.maxHeight * (game.width / game.height);
           }
           game.scale.setSize();
           console.log("_trackEvent", "Vulture, Video Game", "Game of Thrones", "Mobile");
@@ -537,10 +539,10 @@
         FB.ui({
           "method": "feed",
           "link": window.location.href,
-          "picture": "http://placekitten.com/190",
-          "name": "“Game of Thrones” The Video Game",
-          "caption": "All the intrigue, minus the violence. Oh, who are we kidding.",
-          "description": "I drank " + settings.global.score + " glasses of wine in Vulture's “Game of Thrones” Video Game"
+          "picture": "http://pixel.nymag.com/content/dam/daily/vulture/2014/05/15/15-game-of-thrones.jpg",
+          "name": "“Game of Thrones” The Retro Game",
+          "caption": " ",
+          "description": "I drank " + settings.global.score + " glasses of wine in Vulture's retro “Game of Thrones” game."
         }, function(response){});
 
         // Omniture custom tracking
@@ -553,13 +555,13 @@
         // try to launch native app
         if (/\/m\//.test(window.location.href)) {
           window.location.href = "twitter://post?message=" + encodeURIComponent("I drank " + settings.global.score +
-            " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat " + window.location.href);
+            " glasses of wine in @Vulture's @GameofThrones #retrograme! #BeatThat " + window.location.href);
         }
         // otherwise, do it the standard way
         setTimeout(function() {
           window.open("http://twitter.com/intent/tweet" +
             "?source=tweetbutton&text=" + encodeURIComponent("I drank " + settings.global.score +
-            " glasses of wine in @Vulture's @GameofThrones #VideoGame! #BeatThat") + "+" + encodeURIComponent(window.location.href), "Tweet Your Score",
+            " glasses of wine in @Vulture's @GameofThrones #retrograme! #BeatThat") + "+" + encodeURIComponent(window.location.href), "Tweet Your Score",
             "width=600,height=300,left=" + Math.ceil((window.innerWidth / 2) - 300) + ",top=" + Math.ceil((window.innerHeight / 2) - 127));
         }, 100);
 
