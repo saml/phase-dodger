@@ -77,7 +77,12 @@
       },
       "player": {
         "killed": false,
-        "speed": 400
+        "speed": 400,
+        "tutorial": {
+          "modified": false,
+          "x": 0,
+          "y": 0
+        }
       },
       "collectible": {
         "speed": 250,
@@ -322,7 +327,8 @@
           },
           "player": {
             "killed": false,
-            "speed": 400
+            "speed": 400,
+            "tutorial": settings.player.tutorial
           },
           "collectible": {
             "speed": 250,
@@ -351,7 +357,9 @@
         game.add.sprite(0, 0, "background");
 
         // create the player
-        player = game.add.sprite(game.world.centerX - 34, game.world.height - 129, "character");
+        player = game.add.sprite(
+          (!settings.player.tutorial.modified ? game.world.centerX - 34 : settings.player.tutorial.x),
+          (!settings.player.tutorial.modified ? game.world.height - 129 : settings.player.tutorial.y), "character");
         game.physics.arcade.enable(player);
         player.body.collideWorldBounds = true;
         player.body.setSize(player.width, player.height / 2, 0, 0);
@@ -545,7 +553,6 @@
     var _TUTORIAL = {
       "tutorialText": {},
       "tutorialPlayer": {},
-      "tempScore": {},
       "hit": {},
       "hitCount": 0,
 
@@ -565,13 +572,13 @@
         tempTween._lastChild.onComplete.add(function() {
           if (!last) {
             self.continueCountdown(countdown, 1, true);
-            game.add.tween(self.tutorialPlayer).to({"alpha": 0}, 500, Phaser.Easing.Linear.NONE, true, 0, 0, false)
-              .onComplete.add(function() {
-                self.tutorialPlayer.kill();
-              });
           }
           else {
             countdown.destroy();
+            settings.player.tutorial.modified = true;
+            settings.player.tutorial.x = self.tutorialPlayer.x;
+            settings.player.tutorial.y = self.tutorialPlayer.y;
+            self.tutorialPlayer.kill();
             self.gameStart();
           }
         });
@@ -652,9 +659,6 @@
         // physics engine
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        // main game background
-        game.add.sprite(0, 0, "background");
-
         this.tutorialText = game.add.text(game.world.x + 30, game.world.centerY + 140, "TAP AND\nHOLD\nTO MOVE\nLEFT", {
           "font": "400 11px/1.5 Arcade-Normal, Arial, sans-serif",
           "fill": "#fff",
@@ -666,14 +670,6 @@
         game.physics.arcade.enable(this.tutorialPlayer);
         this.tutorialPlayer.body.collideWorldBounds = true;
         this.tutorialPlayer.body.setSize(this.tutorialPlayer.width, this.tutorialPlayer.height / 2, 0, 0);
-
-        this.tempScore = game.add.text(205, 30,
-          "SCORE: " + settings.global.score, {
-            "font": "400 15px/1 Arcade-Normal, sans-serif",
-            "fill": "#fff",
-            "align": "right"
-          });
-        this.tempScore.anchor.setTo(0, 0.5);
 
         // create hit point
         this.hit = game.add.sprite(game.world.x + 50, game.world.centerY + 210, "hitLocation");
