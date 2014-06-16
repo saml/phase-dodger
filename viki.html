@@ -443,15 +443,8 @@
         if (window.innerWidth < 800) {
           settings.global.mobile = true;
           // scale to height, but if height would make width too large, base it on width instead
-          if ((window.innerHeight * (game.width / game.height) > 305) || (window.innerHeight >= 600)) {
-            game.scale.maxWidth = 305;
-            game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
-          }
-          // else, scaled based on height
-          else {
-            game.scale.maxHeight = window.innerHeight;
-            game.scale.maxWidth = game.scale.maxHeight * (game.width / game.height);
-          }
+          game.scale.maxWidth = 305;
+          game.scale.maxHeight = game.scale.maxWidth * (game.height / game.width);
           game.scale.setSize();
           console.log("_trackEvent", "Video Game", "Viki", "Mobile");
           // _gaq.push(["_trackEvent", "Video Game", "Viki", "Mobile"]);
