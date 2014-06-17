@@ -243,11 +243,8 @@
       },
 
       "jumpStart": function() {
-          player.body.velocity.y = -settings.player.speed;
-      },
-      "jump": function() {
-        player.body.velocity.y = settings.player.speed;
-        
+          player.body.velocity.y = -900;//settings.player.speed;
+          player.game.add.tween(player).to({angle:-0},90).start();
       },
 
       "stopMoving": function() {
@@ -338,6 +335,8 @@
         // physics engine
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
+        game.physics.arcade.gravity.y = 1200;
+
         // main game background
         game.add.sprite(0, 0, "background");
 
@@ -413,7 +412,6 @@
         // target inputs
         cursors = game.input.keyboard.createCursorKeys();
         cursors.up.onDown.add(this.jumpStart, this);
-        cursors.up.onUp.add(this.jump, this);
         cursors.left.onDown.add(this.moveLeft, this);
         cursors.left.onUp.add(this.stopMoving, this);
         cursors.right.onDown.add(this.moveRight, this);
