@@ -242,6 +242,14 @@
         }
       },
 
+      "jumpStart": function() {
+          player.body.velocity.y = -settings.player.speed;
+      },
+      "jump": function() {
+        player.body.velocity.y = settings.player.speed;
+        
+      },
+
       "stopMoving": function() {
         player.body.velocity.x = 0;
         player.animations.stop();
@@ -304,20 +312,20 @@
           },
           "player": {
             "killed": false,
-            "speed": 1000,
+            "speed": 2000,
             "tutorial": settings.player.tutorial
           },
           "collectible": {
-            "speed": 800,
+            "speed": 4000,
             "offset": 1
           },
           "dodge": {
             "seconded": false,
-            "speed": 700,
+            "speed": 3000,
             "offset": 1
           },
           "bonus": {
-            "speed": 1000,
+            "speed": 5000,
             "offset": 1
           }
         };
@@ -404,6 +412,8 @@
 
         // target inputs
         cursors = game.input.keyboard.createCursorKeys();
+        cursors.up.onDown.add(this.jumpStart, this);
+        cursors.up.onUp.add(this.jump, this);
         cursors.left.onDown.add(this.moveLeft, this);
         cursors.left.onUp.add(this.stopMoving, this);
         cursors.right.onDown.add(this.moveRight, this);
@@ -417,6 +427,11 @@
           if ((game.time.totalElapsedSeconds() > 0.5) && !settings.dodge.seconded) {
             settings.dodge.seconded = true;
             this.createDodge();
+          }
+
+          if (player.y > 471) {
+            player.body.velocity.y = 0;
+            player.y = 471;
           }
           // collision detections
           game.physics.arcade.overlap(player, collectibles, this.addCollectible, null, this);
