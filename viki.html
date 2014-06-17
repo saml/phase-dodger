@@ -243,8 +243,7 @@
       },
 
       "jumpStart": function() {
-          player.body.velocity.y = -900;//settings.player.speed;
-          player.game.add.tween(player).to({angle:-0},90).start();
+          player.body.velocity.y = -settings.player.speed;
       },
 
       "stopMoving": function() {
