@@ -202,6 +202,11 @@
 
       "killPlayer": function(player, dodge) {
         // stop all the timer loops from generating new objects
+        dodge.kill();
+        settings.global.score -= 200;
+        scoreboard.text = 'SCORE: '+settings.global.score;
+        this.popUpText("-200", false, false);
+/*
         game.time.removeAll();
         var blood = game.add.emitter(player.x + (player.width / 2), dodge.y, 200);
         blood.makeParticles("blood");
@@ -222,6 +227,7 @@
         setTimeout(function() {
           game.state.start("gameover");
         }, 2500);
+        */
       },
 
       "moveLeft": function() {
@@ -298,20 +304,20 @@
           },
           "player": {
             "killed": false,
-            "speed": 400,
+            "speed": 1000,
             "tutorial": settings.player.tutorial
           },
           "collectible": {
-            "speed": 250,
+            "speed": 800,
             "offset": 1
           },
           "dodge": {
             "seconded": false,
-            "speed": 200,
+            "speed": 700,
             "offset": 1
           },
           "bonus": {
-            "speed": 400,
+            "speed": 1000,
             "offset": 1
           }
         };
