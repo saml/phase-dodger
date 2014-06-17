@@ -520,13 +520,13 @@
       "shareToTwitter": function() {
         // try to launch native app
         if (settings.global.mobile) {
-          window.location.href = "twitter://post?message=" + encodeURIComponent("I drank " + settings.global.score +
+          window.location.href = "twitter://post?message=" + encodeURIComponent("I squashed " + settings.global.score +
             " bugs in @justinmccraw's #Viki #retrograme! #QtotheA " + window.location.href);
         }
         // otherwise, do it the standard way
         setTimeout(function() {
           window.open("http://twitter.com/intent/tweet" +
-            "?source=tweetbutton&text=" + encodeURIComponent("I caught " + settings.global.score +
+            "?source=tweetbutton&text=" + encodeURIComponent("I squashed " + settings.global.score +
             " bugs in @justinmccraw's #Viki #retrograme! #QtotheA") + "+" + encodeURIComponent(window.location.href), "Tweet Your Score",
             "width=600,height=300,left=" + Math.ceil((window.innerWidth / 2) - 300) + ",top=" + Math.ceil((window.innerHeight / 2) - 127));
         }, 100);
